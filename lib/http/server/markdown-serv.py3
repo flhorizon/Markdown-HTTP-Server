@@ -89,7 +89,9 @@ class MDServer(SimpleHTTPRequestHandler):
         self.send_header("Content-Type", "text/markdown")
         # Prep response header
         if result.gzipped:
+            print("\"self.headers\": ", self.headers)
             ack_encode = self.headers.get("Accept-Encoding", "") 
+            print("\".get('Accept-Encoding', '')\": ", ack_encode)
             ack_encode = ack_encode.split(",") if ack_encode else []
             ack_gz = "gzip" in ack_encode
             if ack_gz:
@@ -109,11 +111,11 @@ class MDServer(SimpleHTTPRequestHandler):
 
 
     def __find_markdown(self):
-        requested_path = sanitize_path(self.request)
+        requested_path = sanitize_path(self.path)
         msg = "Not Found"
         if os.path.exists(requested_path):
             if os.path.isdir(requested_path):
-                if self.request[-1] == "/":
+                if self.path[-1] == "/":
                     # Otherwise, let default handler answer 301
                     return self.__default_dir_response(requested_path)
 
